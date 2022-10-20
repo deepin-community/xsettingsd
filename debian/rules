@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	scons
+
+override_dh_auto_clean:
+	scons -c
+	rm -f .sconsign.dblite
+	dh_auto_clean
+
+# Needed for get-orig-source target (lazy evaluation, i.e. shouldn't
+# hurt normal builds outside the git repository)
+COMMIT=$(shell cat .git/refs/heads/upstream | cut -c1-8)
+GIT_DATE=$(shell git log --date=iso upstream | fgrep Date: | head -1 | sed -e 's/Date:\s\+//')
+GIT_DATE_DAY=$(shell echo "$(GIT_DATE)" | awk '{print $$1}')
+COMMITS_ON_THAT_DAY=$(shell git log --date=iso upstream | fgrep Date: | fgrep "$(GIT_DATE_DAY)" | wc -l)
+DATE=$(shell date '+%Y%m%d' -ud "$(GIT_DATE)")
+VERSION=0.0.$(DATE)+$(COMMITS_ON_THAT_DAY)+g$(COMMIT)
+
+get-orig-source: clean
+	git archive --format=tar -v --prefix=xsettingsd-$(VERSION)/ -o ../xsettingsd_$(VERSION).orig.tar upstream
+	tar --delete --wildcards -vf ../xsettingsd_$(VERSION).orig.tar xsettingsd-$(VERSION)/debian
+	xz -6vf ../xsettingsd_$(VERSION).orig.tar

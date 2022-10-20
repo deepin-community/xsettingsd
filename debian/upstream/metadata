@@ -1,0 +1,10 @@
+%YAML 1.1
+---
+# https://wiki.debian.org/UpstreamMetadata
+Bug-Database: https://github.com/derat/xsettingsd/issues
+Bug-Submit: https://github.com/derat/xsettingsd/issues/new
+Contact: Daniel Erat <dan@erat.org>
+Name: xsettingsd
+Homepage: https://github.com/derat/xsettingsd#readme
+Repository: https://github.com/derat/xsettingsd.git
+Repository-Browse: https://github.com/derat/xsettingsd
